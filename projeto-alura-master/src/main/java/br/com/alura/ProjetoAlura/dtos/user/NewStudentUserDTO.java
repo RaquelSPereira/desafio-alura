@@ -4,10 +4,16 @@ import br.com.alura.ProjetoAlura.entities.User;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.hibernate.validator.constraints.Length;
 
 import static br.com.alura.ProjetoAlura.enums.role.Role.STUDENT;
 
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class NewStudentUserDTO {
 
     @NotNull
@@ -21,32 +27,6 @@ public class NewStudentUserDTO {
     @NotNull
     @Length(min = 8, max = 16)
     private String password;
-
-    public NewStudentUserDTO() {}
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
 
     public User toModel() {
         return new User(name, email, STUDENT, password);

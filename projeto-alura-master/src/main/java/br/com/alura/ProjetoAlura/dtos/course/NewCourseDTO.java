@@ -3,8 +3,14 @@ package br.com.alura.ProjetoAlura.dtos.course;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.hibernate.validator.constraints.Length;
 
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class NewCourseDTO {
 
     @NotNull
@@ -23,37 +29,4 @@ public class NewCourseDTO {
     @Email
     private String instructorEmail;
 
-    public NewCourseDTO() {}
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getCode() {
-        return code;
-    }
-
-    public void setCode(String code) {
-        this.code = code;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public String getInstructorEmail() {
-        return instructorEmail;
-    }
-
-    public void setInstructorEmail(String instructorEmail) {
-        this.instructorEmail = instructorEmail;
-    }
 }

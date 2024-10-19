@@ -3,9 +3,15 @@ package br.com.alura.ProjetoAlura.entities;
 import br.com.alura.ProjetoAlura.enums.role.Role;
 import br.com.alura.ProjetoAlura.util.EncryptUtil;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
 @Entity
 public class User {
 
@@ -22,33 +28,10 @@ public class User {
     private String email;
     private String password;
 
-    @Deprecated
-    public User() {}
-
     public User(String name, String email, Role role, String password) {
         this.name = name;
         this.role = role;
         this.email = email;
         this.password = EncryptUtil.toMD5(password);
-    }
-
-    public LocalDateTime getCreatedAt() {
-        return createdAt;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public Role getRole() {
-        return role;
-    }
-
-    public String getPassword() {
-        return password;
     }
 }

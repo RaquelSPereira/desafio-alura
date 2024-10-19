@@ -1,5 +1,10 @@
 package br.com.alura.ProjetoAlura.models.registration;
 
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@Data
 public class RegistrationReportItem {
 
     private final String courseName;
@@ -16,23 +21,4 @@ public class RegistrationReportItem {
         this.totalRegistrations = totalRegistrations;
     }
 
-    public String getCourseName() {
-        return courseName;
-    }
-
-    public String getCourseCode() {
-        return courseCode;
-    }
-
-    public String getInstructorName() {
-        return instructorName;
-    }
-
-    public String getInstructorEmail() {
-        return instructorEmail;
-    }
-
-    public Long getTotalRegistrations() {
-        return totalRegistrations;
-    }
 }

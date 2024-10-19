@@ -3,7 +3,13 @@ package br.com.alura.ProjetoAlura.dtos.registration;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class NewRegistrationDTO {
 
     @NotBlank
@@ -14,23 +20,5 @@ public class NewRegistrationDTO {
     @NotNull
     @Email
     private String studentEmail;
-
-    public NewRegistrationDTO() {}
-
-    public String getCourseCode() {
-        return courseCode;
-    }
-
-    public void setCourseCode(String courseCode) {
-        this.courseCode = courseCode;
-    }
-
-    public String getStudentEmail() {
-        return studentEmail;
-    }
-
-    public void setStudentEmail(String studentEmail) {
-        this.studentEmail = studentEmail;
-    }
 
 }
