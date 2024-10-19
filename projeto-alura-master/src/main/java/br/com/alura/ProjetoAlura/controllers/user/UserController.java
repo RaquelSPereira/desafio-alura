@@ -1,5 +1,9 @@
-package br.com.alura.ProjetoAlura.user;
+package br.com.alura.ProjetoAlura.controllers.user;
 
+import br.com.alura.ProjetoAlura.dtos.user.NewStudentUserDTO;
+import br.com.alura.ProjetoAlura.entities.User;
+import br.com.alura.ProjetoAlura.dtos.user.UserListItemDTO;
+import br.com.alura.ProjetoAlura.repository.user.UserRepository;
 import br.com.alura.ProjetoAlura.util.ErrorItemDTO;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;

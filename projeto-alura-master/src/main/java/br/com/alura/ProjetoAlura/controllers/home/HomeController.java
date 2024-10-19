@@ -1,4 +1,4 @@
-package br.com.alura.ProjetoAlura;
+package br.com.alura.ProjetoAlura.controllers.home;
 
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;

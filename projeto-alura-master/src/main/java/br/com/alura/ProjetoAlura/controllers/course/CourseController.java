@@ -1,5 +1,6 @@
-package br.com.alura.ProjetoAlura.course;
+package br.com.alura.ProjetoAlura.controllers.course;
 
+import br.com.alura.ProjetoAlura.dtos.course.NewCourseDTO;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

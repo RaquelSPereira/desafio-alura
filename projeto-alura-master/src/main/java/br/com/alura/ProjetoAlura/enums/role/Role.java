@@ -1,4 +1,4 @@
-package br.com.alura.ProjetoAlura.user;
+package br.com.alura.ProjetoAlura.enums.role;
 
 public enum Role {
     STUDENT,

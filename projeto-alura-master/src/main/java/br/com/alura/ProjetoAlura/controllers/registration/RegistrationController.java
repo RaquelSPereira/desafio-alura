@@ -1,5 +1,7 @@
-package br.com.alura.ProjetoAlura.registration;
+package br.com.alura.ProjetoAlura.controllers.registration;
 
+import br.com.alura.ProjetoAlura.dtos.registration.NewRegistrationDTO;
+import br.com.alura.ProjetoAlura.models.registration.RegistrationReportItem;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
