@@ -1,0 +1,9 @@
+CREATE TABLE Registration (
+    id bigint(20) NOT NULL AUTO_INCREMENT,
+    courseId BIGINT(20) NOT NULL,
+    studentId BIGINT(20) NOT NULL,
+    registration_date DATETIME NOT NULL,
+    PRIMARY KEY (id),
+    CONSTRAINT fk_course FOREIGN KEY (courseId) REFERENCES Course(id) ON DELETE CASCADE,
+    CONSTRAINT fk_student FOREIGN KEY (studentId) REFERENCES User(id) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci ROW_FORMAT=DYNAMIC;

@@ -7,6 +7,7 @@ import br.com.alura.ProjetoAlura.entities.User;
 import br.com.alura.ProjetoAlura.enums.course.CourseEnum;
 import br.com.alura.ProjetoAlura.enums.role.RoleEnum;
 import br.com.alura.ProjetoAlura.services.course.CourseService;
+import br.com.alura.ProjetoAlura.services.user.UserService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -23,12 +24,14 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 class CourseControllerTest {
 
-
     @InjectMocks
     private CourseController courseController;
 
     @Mock
     private CourseService courseService;
+
+    @Mock
+    private UserService userService;
 
     private NewCourseDTO validCourse;
     private User instructor;
@@ -41,7 +44,7 @@ class CourseControllerTest {
 
     @Test
     void shouldCreateCourseSuccessfully() {
-        when(courseService.findByEmail(validCourse.getInstructorEmail())).thenReturn(instructor);
+        when(userService.findByEmail(validCourse.getInstructorEmail())).thenReturn(instructor);
         when(courseService.validateUniqueCodeCourse(validCourse.getCode())).thenReturn(true);
         when(courseService.save(any(Course.class))).thenReturn(new Course());
 
@@ -53,7 +56,7 @@ class CourseControllerTest {
     @Test
     void shouldReturnUnauthorizedWhenInstructorIsStudent() {
         instructor.setRole(RoleEnum.STUDENT);
-        when(courseService.findByEmail(validCourse.getInstructorEmail())).thenReturn(instructor);
+        when(userService.findByEmail(validCourse.getInstructorEmail())).thenReturn(instructor);
 
         ResponseEntity<?> response = courseController.createCourse(validCourse);
 
@@ -62,7 +65,7 @@ class CourseControllerTest {
 
     @Test
     void shouldReturnBadRequestWhenCourseCodeIsNotUnique() {
-        when(courseService.findByEmail(validCourse.getInstructorEmail())).thenReturn(instructor);
+        when(userService.findByEmail(validCourse.getInstructorEmail())).thenReturn(instructor);
         when(courseService.validateUniqueCodeCourse(validCourse.getCode())).thenReturn(false);
 
         ResponseEntity<?> response = courseController.createCourse(validCourse);
@@ -73,7 +76,7 @@ class CourseControllerTest {
     @Test
     void shouldReturnBadRequestWhenCourseCodeIsInvalid() {
         validCourse.setCode("123456");
-        when(courseService.findByEmail(validCourse.getInstructorEmail())).thenReturn(instructor);
+        when(userService.findByEmail(validCourse.getInstructorEmail())).thenReturn(instructor);
         when(courseService.validateUniqueCodeCourse(validCourse.getCode())).thenReturn(true);
 
         ResponseEntity<?> response = courseController.createCourse(validCourse);
@@ -91,7 +94,7 @@ class CourseControllerTest {
         course.setCode(courseCode);
         course.setStatus(CourseEnum.ACTIVE);
 
-        when(courseService.findByEmail(instructorEmail)).thenReturn(instructor);
+        when(userService.findByEmail(instructorEmail)).thenReturn(instructor);
         when(courseService.findByCode(courseCode)).thenReturn(course);
         when(courseService.save(any(Course.class))).thenReturn(course);
 
@@ -107,7 +110,7 @@ class CourseControllerTest {
         String instructorEmail = "instructor@mail.com";
         User student = new User("Student Name", "student@mail.com", RoleEnum.STUDENT, "password");
 
-        when(courseService.findByEmail(instructorEmail)).thenReturn(student);
+        when(userService.findByEmail(instructorEmail)).thenReturn(student);
 
         ResponseEntity<?> response = courseController.inactivateCourse(courseCode, instructorEmail);
 
@@ -120,7 +123,7 @@ class CourseControllerTest {
         String instructorEmail = "instructor@mail.com";
         User instructor = new User("Instructor Name", "instructor@mail.com", RoleEnum.INSTRUCTOR, "password");
 
-        when(courseService.findByEmail(instructorEmail)).thenReturn(instructor);
+        when(userService.findByEmail(instructorEmail)).thenReturn(instructor);
         when(courseService.findByCode(courseCode)).thenReturn(null);  // Curso não encontrado
 
         ResponseEntity<?> response = courseController.inactivateCourse(courseCode, instructorEmail);
@@ -137,7 +140,7 @@ class CourseControllerTest {
         course.setCode(courseCode);
         course.setStatus(CourseEnum.INACTIVE);
 
-        when(courseService.findByEmail(instructorEmail)).thenReturn(instructor);
+        when(userService.findByEmail(instructorEmail)).thenReturn(instructor);
         when(courseService.findByCode(courseCode)).thenReturn(course);
 
         ResponseEntity<?> response = courseController.inactivateCourse(courseCode, instructorEmail);

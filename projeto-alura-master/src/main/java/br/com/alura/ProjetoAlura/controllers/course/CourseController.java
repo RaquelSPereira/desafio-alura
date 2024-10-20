@@ -6,6 +6,7 @@ import br.com.alura.ProjetoAlura.entities.User;
 import br.com.alura.ProjetoAlura.enums.course.CourseEnum;
 import br.com.alura.ProjetoAlura.enums.role.RoleEnum;
 import br.com.alura.ProjetoAlura.services.course.CourseService;
+import br.com.alura.ProjetoAlura.services.user.UserService;
 import jakarta.validation.Valid;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,9 +27,12 @@ public class CourseController {
     @Autowired
     private CourseService courseService;
 
+    @Autowired
+    private UserService userService;
+
     @PostMapping("/course/new")
     public ResponseEntity createCourse(@Valid @RequestBody NewCourseDTO newCourse) {
-        User instructor = courseService.findByEmail(newCourse.getInstructorEmail());
+        User instructor = userService.findByEmail(newCourse.getInstructorEmail());
         if (instructor.getRole().equals(RoleEnum.STUDENT)){
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
@@ -51,7 +55,7 @@ public class CourseController {
     @PostMapping("/course/inactive/{code}/{instructorEmail}")
     public ResponseEntity inactivateCourse(@PathVariable("code") String courseCode,
                                         @PathVariable ("instructorEmail")String instructorEmail) {
-        User instructor = courseService.findByEmail(instructorEmail);
+        User instructor = userService.findByEmail(instructorEmail);
         if (!instructor.getRole().equals(RoleEnum.INSTRUCTOR)){
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }

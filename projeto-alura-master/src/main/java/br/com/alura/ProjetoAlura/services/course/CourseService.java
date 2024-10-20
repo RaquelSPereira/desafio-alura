@@ -1,9 +1,7 @@
 package br.com.alura.ProjetoAlura.services.course;
 
 import br.com.alura.ProjetoAlura.entities.Course;
-import br.com.alura.ProjetoAlura.entities.User;
 import br.com.alura.ProjetoAlura.repository.course.CourseRepository;
-import br.com.alura.ProjetoAlura.repository.user.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -14,9 +12,6 @@ import java.util.regex.Pattern;
 public class CourseService {
 
     @Autowired
-    private UserRepository userRepository;
-
-    @Autowired
     private CourseRepository courseRepository;
 
     public Course save (Course course){
@@ -25,11 +20,6 @@ public class CourseService {
 
     public  Course findByCode (String code){
         return  courseRepository.findByCode(code);
-    }
-
-    public User findByEmail(String emailInstructor){
-        return userRepository.findByEmail(emailInstructor);
-
     }
 
     public boolean validateUniqueCodeCourse(String codeCourse){
