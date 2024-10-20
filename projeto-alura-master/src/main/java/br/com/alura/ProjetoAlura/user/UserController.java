@@ -1,4 +1,4 @@
-package br.com.alura.ProjetoAlura.controllers.user;
+package br.com.alura.ProjetoAlura.user;
 
 import br.com.alura.ProjetoAlura.dtos.user.NewStudentUserDTO;
 import br.com.alura.ProjetoAlura.entities.User;

@@ -9,7 +9,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.validator.constraints.Length;
 
-import static br.com.alura.ProjetoAlura.enums.role.Role.STUDENT;
+import static br.com.alura.ProjetoAlura.enums.role.RoleEnum.STUDENT;
 
 @Data
 @AllArgsConstructor

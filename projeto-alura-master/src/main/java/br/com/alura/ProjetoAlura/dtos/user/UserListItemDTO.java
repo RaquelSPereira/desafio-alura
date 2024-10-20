@@ -1,9 +1,8 @@
 package br.com.alura.ProjetoAlura.dtos.user;
 
 import br.com.alura.ProjetoAlura.entities.User;
-import br.com.alura.ProjetoAlura.enums.role.Role;
+import br.com.alura.ProjetoAlura.enums.role.RoleEnum;
 import lombok.AllArgsConstructor;
-import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -16,7 +15,7 @@ public class UserListItemDTO implements Serializable {
 
     private String name;
     private String email;
-    private Role role;
+    private RoleEnum role;
 
     public UserListItemDTO(User user) {
         this.name = user.getName();

@@ -1,6 +1,6 @@
 package br.com.alura.ProjetoAlura.enums.role;
 
-public enum Role {
+public enum RoleEnum {
     STUDENT,
     INSTRUCTOR
 }

@@ -1,8 +1,10 @@
 package br.com.alura.ProjetoAlura.util;
 
+import lombok.Data;
 import org.springframework.util.Assert;
 import org.springframework.validation.FieldError;
 
+@Data
 public class ErrorItemDTO {
 
     private final String field;
@@ -23,11 +25,5 @@ public class ErrorItemDTO {
         this.message = message;
     }
 
-    public String getField() {
-        return field;
-    }
 
-    public String getMessage() {
-        return message;
-    }
 }

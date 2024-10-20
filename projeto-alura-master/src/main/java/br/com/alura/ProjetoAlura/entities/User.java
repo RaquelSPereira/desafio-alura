@@ -1,6 +1,6 @@
 package br.com.alura.ProjetoAlura.entities;
 
-import br.com.alura.ProjetoAlura.enums.role.Role;
+import br.com.alura.ProjetoAlura.enums.role.RoleEnum;
 import br.com.alura.ProjetoAlura.util.EncryptUtil;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -13,6 +13,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
+@Table(name = "User")
 public class User {
 
     @Id
@@ -23,12 +24,12 @@ public class User {
     private String name;
 
     @Enumerated(EnumType.STRING)
-    private Role role;
+    private RoleEnum role;
 
     private String email;
     private String password;
 
-    public User(String name, String email, Role role, String password) {
+    public User(String name, String email, RoleEnum role, String password) {
         this.name = name;
         this.role = role;
         this.email = email;
