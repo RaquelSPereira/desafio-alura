@@ -1,9 +1,8 @@
 package br.com.alura.ProjetoAlura.user;
 
-import br.com.alura.ProjetoAlura.controllers.user.UserController;
 import br.com.alura.ProjetoAlura.dtos.user.NewStudentUserDTO;
 import br.com.alura.ProjetoAlura.entities.User;
-import br.com.alura.ProjetoAlura.enums.role.Role;
+import br.com.alura.ProjetoAlura.enums.role.RoleEnum;
 import br.com.alura.ProjetoAlura.repository.user.UserRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
@@ -112,8 +111,8 @@ class UserControllerTest {
 
     @Test
     void listAllUsers__should_list_all_users() throws Exception {
-        User user1 = new User("User 1", "user1@test.com", Role.STUDENT,"mudar123");
-        User user2 = new User("User 2", "user2@test.com",Role.STUDENT,"mudar123");
+        User user1 = new User("User 1", "user1@test.com", RoleEnum.STUDENT,"mudar123");
+        User user2 = new User("User 2", "user2@test.com", RoleEnum.STUDENT,"mudar123");
 
         when(userRepository.findAll()).thenReturn(Arrays.asList(user1, user2));
 

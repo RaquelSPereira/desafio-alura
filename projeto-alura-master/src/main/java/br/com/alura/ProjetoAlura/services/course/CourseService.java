@@ -2,7 +2,6 @@ package br.com.alura.ProjetoAlura.services.course;
 
 import br.com.alura.ProjetoAlura.entities.Course;
 import br.com.alura.ProjetoAlura.entities.User;
-import br.com.alura.ProjetoAlura.enums.role.RoleEnum;
 import br.com.alura.ProjetoAlura.repository.course.CourseRepository;
 import br.com.alura.ProjetoAlura.repository.user.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,7 +23,11 @@ public class CourseService {
         return courseRepository.save(course);
     }
 
-    public User validateEmailInstructor(String emailInstructor){
+    public  Course findByCode (String code){
+        return  courseRepository.findByCode(code);
+    }
+
+    public User findByEmail(String emailInstructor){
         return userRepository.findByEmail(emailInstructor);
 
     }

@@ -16,6 +16,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.time.LocalDateTime;
+
 import static br.com.alura.ProjetoAlura.services.course.CourseService.isValidCourseCode;
 
 @RestController
@@ -26,7 +28,7 @@ public class CourseController {
 
     @PostMapping("/course/new")
     public ResponseEntity createCourse(@Valid @RequestBody NewCourseDTO newCourse) {
-        User instructor = courseService.validateEmailInstructor(newCourse.getInstructorEmail());
+        User instructor = courseService.findByEmail(newCourse.getInstructorEmail());
         if (instructor.getRole().equals(RoleEnum.STUDENT)){
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
@@ -46,9 +48,26 @@ public class CourseController {
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
-    @PostMapping("/course/{code}/inactive")
-    public ResponseEntity createCourse(@PathVariable("code") String courseCode) {
-        // TODO: Implementar a Questão 2 - Inativação de Curso aqui...
+    @PostMapping("/course/inactive/{code}/{instructorEmail}")
+    public ResponseEntity inactivateCourse(@PathVariable("code") String courseCode,
+                                        @PathVariable ("instructorEmail")String instructorEmail) {
+        User instructor = courseService.findByEmail(instructorEmail);
+        if (!instructor.getRole().equals(RoleEnum.INSTRUCTOR)){
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+
+        Course course = courseService.findByCode(courseCode);
+        if (course == null){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        }
+
+        if(course.getStatus().equals(CourseEnum.INACTIVE)){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+
+        }
+        course.setStatus(CourseEnum.INACTIVE);
+        course.setInactivationDate(LocalDateTime.now());
+        courseService.save(course);
 
         return ResponseEntity.ok().build();
     }
