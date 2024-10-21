@@ -1,6 +1,6 @@
 package br.com.alura.ProjetoAlura.dtos.user;
 
-import br.com.alura.ProjetoAlura.entities.User;
+import br.com.alura.ProjetoAlura.entities.user.User;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;

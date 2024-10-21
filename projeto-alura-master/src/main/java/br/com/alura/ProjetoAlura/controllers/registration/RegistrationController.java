@@ -1,9 +1,9 @@
 package br.com.alura.ProjetoAlura.controllers.registration;
 
 import br.com.alura.ProjetoAlura.dtos.registration.NewRegistrationDTO;
-import br.com.alura.ProjetoAlura.entities.Course;
-import br.com.alura.ProjetoAlura.entities.Registration;
-import br.com.alura.ProjetoAlura.entities.User;
+import br.com.alura.ProjetoAlura.entities.course.Course;
+import br.com.alura.ProjetoAlura.entities.registration.Registration;
+import br.com.alura.ProjetoAlura.entities.user.User;
 import br.com.alura.ProjetoAlura.enums.course.CourseEnum;
 import br.com.alura.ProjetoAlura.enums.role.RoleEnum;
 import br.com.alura.ProjetoAlura.models.registration.RegistrationReportItem;
@@ -37,7 +37,6 @@ public class RegistrationController {
 
     @PostMapping("/registration/new")
     public ResponseEntity newRegistration (@Valid @RequestBody NewRegistrationDTO newRegistration) {
-
         Course course = courseService.findByCode(newRegistration.getCourseCode());
         User user = userService.findByEmail(newRegistration.getStudentEmail());
 
@@ -57,35 +56,7 @@ public class RegistrationController {
 
     @GetMapping("/registration/report")
     public ResponseEntity<List<RegistrationReportItem>> report() {
-        List<RegistrationReportItem> items = new ArrayList<>();
-
-        // TODO: Implementar a Questão 4 - Relatório de Cursos Mais Acessados aqui...
-
-        // Dados fictícios abaixo que devem ser substituídos
-        items.add(new RegistrationReportItem(
-                "Java para Iniciantes",
-                "java",
-                "Charles",
-                "charles@alura.com.br",
-                10L
-        ));
-
-        items.add(new RegistrationReportItem(
-                "Spring para Iniciantes",
-                "spring",
-                "Charles",
-                "charles@alura.com.br",
-                9L
-        ));
-
-        items.add(new RegistrationReportItem(
-                "Maven para Avançados",
-                "maven",
-                "Charles",
-                "charles@alura.com.br",
-                9L
-        ));
-
+        List<RegistrationReportItem> items = registrationService.findCourseRegistrationReport();
         return ResponseEntity.ok(items);
     }
 

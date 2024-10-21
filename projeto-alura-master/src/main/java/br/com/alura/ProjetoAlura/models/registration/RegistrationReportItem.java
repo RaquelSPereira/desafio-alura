@@ -1,8 +1,6 @@
 package br.com.alura.ProjetoAlura.models.registration;
 
-import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 @Data
 public class RegistrationReportItem {
@@ -20,5 +18,4 @@ public class RegistrationReportItem {
         this.instructorEmail = instructorEmail;
         this.totalRegistrations = totalRegistrations;
     }
-
 }

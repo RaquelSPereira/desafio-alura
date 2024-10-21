@@ -1,9 +1,8 @@
-package br.com.alura.ProjetoAlura.controllers;
+package br.com.alura.ProjetoAlura.controllers.course;
 
-import br.com.alura.ProjetoAlura.controllers.course.CourseController;
 import br.com.alura.ProjetoAlura.dtos.course.NewCourseDTO;
-import br.com.alura.ProjetoAlura.entities.Course;
-import br.com.alura.ProjetoAlura.entities.User;
+import br.com.alura.ProjetoAlura.entities.course.Course;
+import br.com.alura.ProjetoAlura.entities.user.User;
 import br.com.alura.ProjetoAlura.enums.course.CourseEnum;
 import br.com.alura.ProjetoAlura.enums.role.RoleEnum;
 import br.com.alura.ProjetoAlura.services.course.CourseService;

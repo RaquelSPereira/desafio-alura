@@ -1,5 +1,7 @@
-package br.com.alura.ProjetoAlura.entities;
+package br.com.alura.ProjetoAlura.entities.registration;
 
+import br.com.alura.ProjetoAlura.entities.user.User;
+import br.com.alura.ProjetoAlura.entities.course.Course;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;

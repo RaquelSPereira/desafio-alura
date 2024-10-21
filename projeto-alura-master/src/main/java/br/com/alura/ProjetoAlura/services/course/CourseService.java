@@ -1,6 +1,6 @@
 package br.com.alura.ProjetoAlura.services.course;
 
-import br.com.alura.ProjetoAlura.entities.Course;
+import br.com.alura.ProjetoAlura.entities.course.Course;
 import br.com.alura.ProjetoAlura.repository.course.CourseRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

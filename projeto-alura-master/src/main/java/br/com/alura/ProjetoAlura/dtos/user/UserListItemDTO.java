@@ -1,6 +1,6 @@
 package br.com.alura.ProjetoAlura.dtos.user;
 
-import br.com.alura.ProjetoAlura.entities.User;
+import br.com.alura.ProjetoAlura.entities.user.User;
 import br.com.alura.ProjetoAlura.enums.role.RoleEnum;
 import lombok.AllArgsConstructor;
 import lombok.Getter;

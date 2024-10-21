@@ -1,6 +1,6 @@
 package br.com.alura.ProjetoAlura.services.user;
 
-import br.com.alura.ProjetoAlura.entities.User;
+import br.com.alura.ProjetoAlura.entities.user.User;
 import br.com.alura.ProjetoAlura.repository.user.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
