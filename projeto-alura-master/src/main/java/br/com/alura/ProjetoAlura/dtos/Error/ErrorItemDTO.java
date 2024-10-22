@@ -1,4 +1,4 @@
-package br.com.alura.ProjetoAlura.util;
+package br.com.alura.ProjetoAlura.dtos.Error;
 
 import lombok.Data;
 import org.springframework.util.Assert;

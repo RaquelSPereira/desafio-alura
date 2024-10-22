@@ -1,9 +1,9 @@
-package br.com.alura.ProjetoAlura.util;
+package br.com.alura.ProjetoAlura.util.encrypts;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
-public class EncryptUtil {
+public class EncryptUtil{
 
     public static String toMD5(String input) {
         try {

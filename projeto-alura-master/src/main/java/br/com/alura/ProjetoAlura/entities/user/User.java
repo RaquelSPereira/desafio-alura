@@ -1,7 +1,7 @@
 package br.com.alura.ProjetoAlura.entities.user;
 
 import br.com.alura.ProjetoAlura.enums.role.RoleEnum;
-import br.com.alura.ProjetoAlura.util.EncryptUtil;
+import br.com.alura.ProjetoAlura.util.encrypts.EncryptUtil;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;

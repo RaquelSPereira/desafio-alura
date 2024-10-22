@@ -1,7 +1,7 @@
 package br.com.alura.ProjetoAlura.user;
 
 import br.com.alura.ProjetoAlura.entities.user.User;
-import br.com.alura.ProjetoAlura.util.EncryptUtil;
+import br.com.alura.ProjetoAlura.util.encrypts.EncryptUtil;
 import org.junit.jupiter.api.Test;
 
 import static br.com.alura.ProjetoAlura.enums.role.RoleEnum.STUDENT;

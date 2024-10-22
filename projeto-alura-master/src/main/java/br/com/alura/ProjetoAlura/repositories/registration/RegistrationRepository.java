@@ -1,4 +1,4 @@
-package br.com.alura.ProjetoAlura.repository.registration;
+package br.com.alura.ProjetoAlura.repositories.registration;
 
 import br.com.alura.ProjetoAlura.entities.registration.Registration;
 import br.com.alura.ProjetoAlura.models.registration.RegistrationReportItem;

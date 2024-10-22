@@ -97,7 +97,7 @@ class CourseControllerTest {
         when(courseService.findByCode(courseCode)).thenReturn(course);
         when(courseService.save(any(Course.class))).thenReturn(course);
 
-        ResponseEntity<?> response = courseController.inactivateCourse(courseCode, instructorEmail);
+        ResponseEntity<?> response = courseController.inactivateCourse(courseCode);
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertEquals(CourseEnum.INACTIVE, course.getStatus());
@@ -111,7 +111,7 @@ class CourseControllerTest {
 
         when(userService.findByEmail(instructorEmail)).thenReturn(student);
 
-        ResponseEntity<?> response = courseController.inactivateCourse(courseCode, instructorEmail);
+        ResponseEntity<?> response = courseController.inactivateCourse(courseCode);
 
         assertEquals(HttpStatus.UNAUTHORIZED, response.getStatusCode());
     }
@@ -125,7 +125,7 @@ class CourseControllerTest {
         when(userService.findByEmail(instructorEmail)).thenReturn(instructor);
         when(courseService.findByCode(courseCode)).thenReturn(null);  // Curso não encontrado
 
-        ResponseEntity<?> response = courseController.inactivateCourse(courseCode, instructorEmail);
+        ResponseEntity<?> response = courseController.inactivateCourse(courseCode);
 
         assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
     }
@@ -142,7 +142,7 @@ class CourseControllerTest {
         when(userService.findByEmail(instructorEmail)).thenReturn(instructor);
         when(courseService.findByCode(courseCode)).thenReturn(course);
 
-        ResponseEntity<?> response = courseController.inactivateCourse(courseCode, instructorEmail);
+        ResponseEntity<?> response = courseController.inactivateCourse(courseCode);
         assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
     }
 
