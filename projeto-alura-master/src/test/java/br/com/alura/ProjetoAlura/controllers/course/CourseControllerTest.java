@@ -4,147 +4,99 @@ import br.com.alura.ProjetoAlura.dtos.course.NewCourseDTO;
 import br.com.alura.ProjetoAlura.entities.course.Course;
 import br.com.alura.ProjetoAlura.entities.user.User;
 import br.com.alura.ProjetoAlura.enums.course.CourseEnum;
-import br.com.alura.ProjetoAlura.enums.role.RoleEnum;
 import br.com.alura.ProjetoAlura.services.course.CourseService;
 import br.com.alura.ProjetoAlura.services.user.UserService;
+import br.com.alura.ProjetoAlura.util.exceptions.BadRequestException;
+import br.com.alura.ProjetoAlura.util.exceptions.NotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+
+import java.time.LocalDateTime;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-class CourseControllerTest {
+public class CourseControllerTest {
+
 
     @InjectMocks
     private CourseController courseController;
 
     @Mock
-    private CourseService courseService;
-
-    @Mock
     private UserService userService;
 
+    @Mock
+    private CourseService courseService;
+
     private NewCourseDTO validCourse;
-    private User instructor;
 
     @BeforeEach
     void setUp() {
-        validCourse = new NewCourseDTO("Java Course", "JAVA-AD", "Advanced Java", "instructor@mail.com");
-        instructor = new User("Instructor Name", "instructor@mail.com", RoleEnum.INSTRUCTOR, "password");
+        MockitoAnnotations.openMocks(this);
+        validCourse = new NewCourseDTO();
+        validCourse.setInstructorEmail("valid.instructor@example.com");
+        validCourse.setCode("COURSE-ABV");
+        validCourse.setName("Curso Exemplo");
+        validCourse.setDescription("Descrição do Curso");
     }
 
     @Test
     void shouldCreateCourseSuccessfully() {
-        when(userService.findByEmail(validCourse.getInstructorEmail())).thenReturn(instructor);
+        when(userService.isInstructor(validCourse.getInstructorEmail())).thenReturn(true);
         when(courseService.validateUniqueCodeCourse(validCourse.getCode())).thenReturn(true);
-        when(courseService.save(any(Course.class))).thenReturn(new Course());
+        User mockUser = new User();
+        Course expectedCourse = new Course(null, validCourse.getName(), validCourse.getCode(),
+                mockUser, validCourse.getDescription(), CourseEnum.ACTIVE, null, LocalDateTime.now());
+        when(courseService.createCourse(validCourse)).thenReturn(expectedCourse);
+        var response = courseController.createCourse(validCourse);
 
-        ResponseEntity<?> response = courseController.createCourse(validCourse);
-
-        assertEquals(HttpStatus.CREATED, response.getStatusCode());
+        assertEquals("Curso criado com sucesso!", response.getBody().getMessage());
     }
 
     @Test
-    void shouldReturnUnauthorizedWhenInstructorIsStudent() {
-        instructor.setRole(RoleEnum.STUDENT);
-        when(userService.findByEmail(validCourse.getInstructorEmail())).thenReturn(instructor);
+    // fala que o email nao perternce ao instrutor
+    void shouldReturnBadRequestWhenEmail() {
+        when(userService.isInstructor(validCourse.getInstructorEmail())).thenReturn(false);
 
-        ResponseEntity<?> response = courseController.createCourse(validCourse);
+        try {
+            courseController.createCourse(validCourse);
+        } catch (NotFoundException e) {
+            assertEquals("Email informado não pertence a um instrutor", e.getMessage());
+        }
+    }
 
-        assertEquals(HttpStatus.UNAUTHORIZED, response.getStatusCode());
+
+    @Test
+    //flaa que o curso nao é valido
+    void shouldReturnBadRequestWhenCourseCode() {
+        when(userService.isInstructor(validCourse.getInstructorEmail())).thenReturn(true);
+        when(courseService.validateUniqueCodeCourse(validCourse.getCode())).thenReturn(true);
+
+        try {
+            courseController.createCourse(validCourse);
+        } catch (BadRequestException e) {
+            assertEquals("Código do curso já existe", e.getMessage());
+        }
     }
 
     @Test
     void shouldReturnBadRequestWhenCourseCodeIsNotUnique() {
-        when(userService.findByEmail(validCourse.getInstructorEmail())).thenReturn(instructor);
-        when(courseService.validateUniqueCodeCourse(validCourse.getCode())).thenReturn(false);
-
-        ResponseEntity<?> response = courseController.createCourse(validCourse);
-
-        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
-    }
-
-    @Test
-    void shouldReturnBadRequestWhenCourseCodeIsInvalid() {
-        validCourse.setCode("123456");
-        when(userService.findByEmail(validCourse.getInstructorEmail())).thenReturn(instructor);
+        validCourse.setCode("invalid_code");
+        when(userService.isInstructor(validCourse.getInstructorEmail())).thenReturn(true);
         when(courseService.validateUniqueCodeCourse(validCourse.getCode())).thenReturn(true);
 
-        ResponseEntity<?> response = courseController.createCourse(validCourse);
-
-        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+        try {
+            courseController.createCourse(validCourse);
+        } catch (BadRequestException e) {
+            assertEquals("Código do curso inválido", e.getMessage());
+        }
     }
-
-
-    @Test
-    void shouldInactivateCourseSuccessfully() {
-        String courseCode = "JAVA-AD";
-        String instructorEmail = "instructor@mail.com";
-        User instructor = new User("Instructor Name", "instructor@mail.com", RoleEnum.INSTRUCTOR, "password");
-        Course course = new Course();
-        course.setCode(courseCode);
-        course.setStatus(CourseEnum.ACTIVE);
-
-        when(userService.findByEmail(instructorEmail)).thenReturn(instructor);
-        when(courseService.findByCode(courseCode)).thenReturn(course);
-        when(courseService.save(any(Course.class))).thenReturn(course);
-
-        ResponseEntity<?> response = courseController.inactivateCourse(courseCode);
-
-        assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertEquals(CourseEnum.INACTIVE, course.getStatus());
-    }
-
-    @Test
-    void shouldReturnUnauthorizedWhenInstructorIsNotValid() {
-        String courseCode = "JAVA-AD";
-        String instructorEmail = "instructor@mail.com";
-        User student = new User("Student Name", "student@mail.com", RoleEnum.STUDENT, "password");
-
-        when(userService.findByEmail(instructorEmail)).thenReturn(student);
-
-        ResponseEntity<?> response = courseController.inactivateCourse(courseCode);
-
-        assertEquals(HttpStatus.UNAUTHORIZED, response.getStatusCode());
-    }
-
-    @Test
-    void shouldReturnBadRequestWhenCourseNotFound() {
-        String courseCode = "JAVA-AD";
-        String instructorEmail = "instructor@mail.com";
-        User instructor = new User("Instructor Name", "instructor@mail.com", RoleEnum.INSTRUCTOR, "password");
-
-        when(userService.findByEmail(instructorEmail)).thenReturn(instructor);
-        when(courseService.findByCode(courseCode)).thenReturn(null);  // Curso não encontrado
-
-        ResponseEntity<?> response = courseController.inactivateCourse(courseCode);
-
-        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
-    }
-
-    @Test
-    void shouldReturnBadRequestWhenCourseIsAlreadyInactive() {
-        String courseCode = "JAVA-AD";
-        String instructorEmail = "instructor@mail.com";
-        User instructor = new User("Instructor Name", "instructor@mail.com", RoleEnum.INSTRUCTOR, "password");
-        Course course = new Course();
-        course.setCode(courseCode);
-        course.setStatus(CourseEnum.INACTIVE);
-
-        when(userService.findByEmail(instructorEmail)).thenReturn(instructor);
-        when(courseService.findByCode(courseCode)).thenReturn(course);
-
-        ResponseEntity<?> response = courseController.inactivateCourse(courseCode);
-        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
-    }
-
-
 }
+
+

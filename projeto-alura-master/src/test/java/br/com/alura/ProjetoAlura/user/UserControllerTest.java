@@ -1,127 +1,112 @@
 package br.com.alura.ProjetoAlura.user;
 
 import br.com.alura.ProjetoAlura.controllers.user.UserController;
+import br.com.alura.ProjetoAlura.dtos.login.LoginUserDto;
+import br.com.alura.ProjetoAlura.dtos.response.ErrorItemDTO;
+import br.com.alura.ProjetoAlura.dtos.token.RecoveryJwtTokenDto;
+import br.com.alura.ProjetoAlura.dtos.user.NewInstructorUserDTO;
 import br.com.alura.ProjetoAlura.dtos.user.NewStudentUserDTO;
+import br.com.alura.ProjetoAlura.dtos.user.UserListItemDTO;
 import br.com.alura.ProjetoAlura.entities.user.User;
 import br.com.alura.ProjetoAlura.enums.role.RoleEnum;
-import br.com.alura.ProjetoAlura.repositories.user.UserRepository;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import br.com.alura.ProjetoAlura.services.auth.AuthenticateService;
+import br.com.alura.ProjetoAlura.services.user.UserService;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.http.MediaType;
-import org.springframework.test.web.servlet.MockMvc;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 
-import java.util.Arrays;
+import java.util.ArrayList;
+import java.util.List;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@WebMvcTest(UserController.class)
+@ExtendWith(MockitoExtension.class)
 class UserControllerTest {
 
-    @Autowired
-    private MockMvc mockMvc;
+    private User student;
+    private NewStudentUserDTO newStudentUserDTO;
+    private LoginUserDto loginUserDto;
+    private RecoveryJwtTokenDto recoveryJwtTokenDto;
+    private UserListItemDTO userListItemDTO;
+    private List<UserListItemDTO> userListItemDTOList;
+    private NewInstructorUserDTO newInstructorUserDTO;
 
-    @MockBean
-    private UserRepository userRepository;
+    private final String validEmail = "email@email.com";
 
-    @Autowired
-    private ObjectMapper objectMapper;
+    @BeforeEach
+    void setUp() {
+        newStudentUserDTO = new NewStudentUserDTO("name", validEmail, "password");
+        loginUserDto = new LoginUserDto(validEmail, "password");
+        recoveryJwtTokenDto = new RecoveryJwtTokenDto("token");
+        newInstructorUserDTO = new NewInstructorUserDTO("name", validEmail, "password");
+        student = new User("Student Name", "student@mail.com", RoleEnum.STUDENT, "password");
+    }
+
+    @InjectMocks
+    private UserController userController;
+
+    @Mock
+    private UserService userService;
+
+    @Mock
+    private AuthenticateService authenticateService;
 
     @Test
-    void newStudent__should_return_bad_request_when_password_is_blank() throws Exception {
-        NewStudentUserDTO newStudentUserDTO = new NewStudentUserDTO();
-        newStudentUserDTO.setEmail("test@test.com");
-        newStudentUserDTO.setName("Charles");
-        newStudentUserDTO.setPassword("");
+    void shouldCreateNewStudentSuccessfully() {
+        when(userService.existsByEmail(newStudentUserDTO.getEmail())).thenReturn(false);
 
-        mockMvc.perform(post("/user/newStudent")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(newStudentUserDTO)))
-                .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$[0].field").value("password"))
-                .andExpect(jsonPath("$[0].message").isNotEmpty());
+        ResponseEntity<?> response = userController.newStudent(newStudentUserDTO);
+        assertEquals(HttpStatus.CREATED, response.getStatusCode());
     }
 
     @Test
-    void newStudent__should_return_bad_request_when_email_is_blank() throws Exception {
-        NewStudentUserDTO newStudentUserDTO = new NewStudentUserDTO();
-        newStudentUserDTO.setEmail("");
-        newStudentUserDTO.setName("Charles");
-        newStudentUserDTO.setPassword("mudar123");
+    void shouldReturnBadRequestWhenStudentAlreadyExists() {
+        when(userService.existsByEmail(newStudentUserDTO.getEmail())).thenReturn(true);
 
-        mockMvc.perform(post("/user/newStudent")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(newStudentUserDTO)))
-                .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$[0].field").value("email"))
-                .andExpect(jsonPath("$[0].message").isNotEmpty());
+        ResponseEntity<?> response = userController.newStudent(newStudentUserDTO);
+        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
     }
 
     @Test
-    void newStudent__should_return_bad_request_when_email_is_invalid() throws Exception {
-        NewStudentUserDTO newStudentUserDTO = new NewStudentUserDTO();
-        newStudentUserDTO.setEmail("Charles");
-        newStudentUserDTO.setName("Charles");
-        newStudentUserDTO.setPassword("mudar123");
+    void shouldAuthenticateAndReturnTokenSuccessfully() {
+        when(authenticateService.authenticateUser(loginUserDto)).thenReturn(recoveryJwtTokenDto);
 
-        mockMvc.perform(post("/user/newStudent")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(newStudentUserDTO)))
-                .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$[0].field").value("email"))
-                .andExpect(jsonPath("$[0].message").isNotEmpty());
+        ResponseEntity<?> response = userController.authenticateUser(loginUserDto);
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertEquals(recoveryJwtTokenDto, response.getBody());
     }
 
     @Test
-    void newStudent__should_return_bad_request_when_email_already_exists() throws Exception {
-        NewStudentUserDTO newStudentUserDTO = new NewStudentUserDTO();
-        newStudentUserDTO.setEmail("charles@alura.com.br");
-        newStudentUserDTO.setName("Charles");
-        newStudentUserDTO.setPassword("mudar123");
+    void shouldReturnAllUsersSuccessfully() {
+        List<User> userList = new ArrayList<>();
+        userList.add(student);
+        when(userService.findAll()).thenReturn(userList);
 
-        when(userRepository.existsByEmail(newStudentUserDTO.getEmail())).thenReturn(true);
-
-        mockMvc.perform(post("/user/newStudent")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(newStudentUserDTO)))
-                .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.field").value("email"))
-                .andExpect(jsonPath("$.message").value("Email já cadastrado no sistema"));
+        ResponseEntity<?> response = userController.listAllUsers();
+        assertEquals(HttpStatus.OK, response.getStatusCode());
     }
 
     @Test
-    void newStudent__should_return_created_when_user_request_is_valid() throws Exception {
-        NewStudentUserDTO newStudentUserDTO = new NewStudentUserDTO();
-        newStudentUserDTO.setEmail("charles@alura.com.br");
-        newStudentUserDTO.setName("Charles");
-        newStudentUserDTO.setPassword("mudar123");
+    void shouldCreateNewInstructorSuccessfully() {
+        when(userService.existsByEmail(validEmail)).thenReturn(false);
 
-        when(userRepository.existsByEmail(newStudentUserDTO.getEmail())).thenReturn(false);
-
-        mockMvc.perform(post("/user/newStudent")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(newStudentUserDTO)))
-                .andExpect(status().isCreated());
+        ResponseEntity<?> response = userController.newInstructor(newInstructorUserDTO);
+        assertEquals(HttpStatus.CREATED, response.getStatusCode());
     }
 
     @Test
-    void listAllUsers__should_list_all_users() throws Exception {
-        User user1 = new User("User 1", "user1@test.com", RoleEnum.STUDENT,"mudar123");
-        User user2 = new User("User 2", "user2@test.com", RoleEnum.STUDENT,"mudar123");
+    void shouldReturnBadRequestWhenInstructorAlreadyExists() {
+        when(userService.existsByEmail(validEmail)).thenReturn(true);
 
-        when(userRepository.findAll()).thenReturn(Arrays.asList(user1, user2));
-
-        mockMvc.perform(get("/user/all")
-                        .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$[0].name").value("User 1"))
-                .andExpect(jsonPath("$[1].name").value("User 2"));
+        ResponseEntity<?> response = userController.newInstructor(newInstructorUserDTO);
+        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+        ErrorItemDTO errorItemDTO = (ErrorItemDTO) response.getBody();
+        assertEquals("Email já cadastrado no sistema", errorItemDTO.getMessage());
     }
-
 }

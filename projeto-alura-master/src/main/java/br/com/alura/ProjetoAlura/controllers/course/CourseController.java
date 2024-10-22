@@ -1,21 +1,18 @@
 package br.com.alura.ProjetoAlura.controllers.course;
 
 import br.com.alura.ProjetoAlura.dtos.course.NewCourseDTO;
+import br.com.alura.ProjetoAlura.dtos.response.SuccessResponseDTO;
 import br.com.alura.ProjetoAlura.entities.course.Course;
-import br.com.alura.ProjetoAlura.entities.user.User;
-import br.com.alura.ProjetoAlura.enums.course.CourseEnum;
-import br.com.alura.ProjetoAlura.enums.role.RoleEnum;
 import br.com.alura.ProjetoAlura.services.course.CourseService;
 import br.com.alura.ProjetoAlura.services.user.UserService;
-import br.com.alura.ProjetoAlura.util.exceptions.NotFoundException;
+import br.com.alura.ProjetoAlura.util.exceptions.*;
 import jakarta.validation.Valid;
-import org.springframework.beans.BeanUtils;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.time.LocalDateTime;
 
 import static br.com.alura.ProjetoAlura.services.course.CourseService.isValidCourseCode;
 
@@ -29,43 +26,33 @@ public class CourseController {
     private UserService userService;
 
     @PostMapping("/course/new")
-    public ResponseEntity createCourse(@Valid @RequestBody NewCourseDTO newCourse) {
-        User instructor = userService.findByEmail(newCourse.getInstructorEmail());
-//        if (instructor.getRole().equals(RoleEnum.STUDENT)){
-//            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-//        }
-        boolean isUniqueCodeCourse = courseService.validateUniqueCodeCourse(newCourse.getCode());
-        if (!isUniqueCodeCourse){
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
-        }
-        boolean isValideCourseCode = isValidCourseCode(newCourse.getCode());
+    public ResponseEntity<SuccessResponseDTO<Course>> createCourse(@Valid @RequestBody NewCourseDTO newCourse) {
 
-        if (!isValideCourseCode){
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        if (!userService.isInstructor(newCourse.getInstructorEmail())){
+            throw new NotFoundException("Email informado não pertence a um instrutor");
         }
-        Course course = new Course();
-        course.setInstructor(instructor);
-        BeanUtils.copyProperties(newCourse, course);
-        courseService.save(course);
-        return ResponseEntity.status(HttpStatus.CREATED).build();
+
+        if (!courseService.validateUniqueCodeCourse(newCourse.getCode())){
+            throw new BadRequestException("Código do curso já existe");
+        }
+
+        if (!isValidCourseCode(newCourse.getCode())){
+            throw new BadRequestException("Código do curso inválido");
+
+        }
+        Course response = courseService.createCourse(newCourse);
+        return new ResponseEntity<>(new SuccessResponseDTO<>("Curso criado com sucesso!", response), HttpStatus.CREATED);
     }
 
-    //colocar validacao no path variable
+
     @PatchMapping("/course/inactive/{code}")
-    public ResponseEntity inactivateCourse(@PathVariable("code") String courseCode) {
-        Course course = courseService.findByCode(courseCode);
-        if (course == null){
-            throw new NotFoundException("Código do curso inválido");
-        }
+    public ResponseEntity<SuccessResponseDTO<Course>> inactivateCourse(@NotBlank @NotNull @PathVariable("code") String courseCode) {
 
-        if (course.getStatus().equals(CourseEnum.INACTIVE)){
-            throw new NotFoundException("O curso já está inativo");
+        if(!courseService.isValidUpdateInactiveStatusInCourse(courseCode)){
+            throw new BadRequestException("Não é possível alterar status do curso");
         }
-        course.setStatus(CourseEnum.INACTIVE);
-        course.setInactivationDate(LocalDateTime.now());
-        courseService.save(course);
-
-        return ResponseEntity.ok().build();
+        Course response = courseService.updateInactiveStatusInCourse(courseCode);
+        return new ResponseEntity<>(new SuccessResponseDTO<>("Curso atualizado com sucesso!", response), HttpStatus.OK);
     }
 
 }

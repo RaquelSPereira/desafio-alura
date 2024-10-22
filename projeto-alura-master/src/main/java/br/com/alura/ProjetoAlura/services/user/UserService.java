@@ -2,8 +2,10 @@ package br.com.alura.ProjetoAlura.services.user;
 
 import br.com.alura.ProjetoAlura.dtos.login.LoginUserDto;
 import br.com.alura.ProjetoAlura.dtos.token.RecoveryJwtTokenDto;
+import br.com.alura.ProjetoAlura.dtos.user.NewInstructorUserDTO;
 import br.com.alura.ProjetoAlura.dtos.user.NewStudentUserDTO;
 import br.com.alura.ProjetoAlura.entities.user.User;
+import br.com.alura.ProjetoAlura.enums.role.RoleEnum;
 import br.com.alura.ProjetoAlura.repositories.user.UserRepository;
 import br.com.alura.ProjetoAlura.adapters.auth.JwtTokenAdapter;
 import br.com.alura.ProjetoAlura.services.userDetails.UserDetailsImpl;
@@ -30,12 +32,12 @@ public class UserService {
     @Autowired
     private AuthenticationManager authenticationManager;
 
-    public Optional<User> save (User user){
-        return  userRepository.save(user);
+    public void  save (User user){
+        userRepository.save(user);
     }
 
-    public User findByEmail(String emailInstructor){
-        return userRepository.findByEmail(emailInstructor).get();
+    public Optional<User> findByEmail(String emailInstructor){
+        return userRepository.findByEmail(emailInstructor);
     }
 
     public boolean existsByEmail(String email){
@@ -50,9 +52,23 @@ public class UserService {
         return userRepository.findAll();
     }
 
+    public boolean isInstructor(String email){
+        return findByEmail(email).get().getRole().equals(RoleEnum.INSTRUCTOR);
+    }
+
+    public boolean isStudent(String email){
+        return findByEmail(email).get().getRole().equals(RoleEnum.STUDENT);
+    }
+
     public User createStudent(NewStudentUserDTO newStudentUserDTO){
         User user = newStudentUserDTO.toModel();
         save(user);
+        return user;
+    }
+
+    public User createInstructor(NewInstructorUserDTO newInstructorUserDTO){
+        User user = newInstructorUserDTO.toModel();
+        userRepository.save(user);
         return user;
     }
 }

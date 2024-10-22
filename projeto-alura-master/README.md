@@ -2,96 +2,142 @@
 
 Bem-vinda ao teste para **Pessoa Desenvolvedora Java** da Alura!
 
-Neste desafio, será simulado uma parte do domínio de uma plataforma educacional para que você possa demonstrar seus conhecimentos técnicos.
-
-Não há respostas certas ou erradas, queremos avaliar como você aplica conceitos de lógica e orientação a objetos para resolver problemas.
-
 ## Requisitos
 
-- Java 18 ou superior
+- Java 21.
 - Spring Boot
-- Spring Data JPA
-- MySQL
-- Migrações de banco de dados manuais com [Flyway](https://www.baeldung.com/database-migrations-with-flyway)
+- Docker
+- Plataforma de teste - indicado Postman
 
 ## Instruções
 
-1. Faça o upload do template inicial do projeto no seu repositório GitHub e mantenha-o público (seus commits serão avaliados).
-2. Importe o projeto na IDE de sua escolha.
-3. O código deve ser todo escrito em inglês, mesmo que os requisitos estejam em português.
+1. Rode o comando:
+````
+docker-compose up -d
+````
+2. Rode o projeto na classe `ProjetoAluraApplication.java`.
+## Endpoints
 
-## Desafio
+### 1. Login
 
-O projeto base já contém a configuração das tecnologias requeridas. Algumas funcionalidades relacionadas à entidade `User` estão implementadas e podem servir como guia para a resolução das questões.
+Realize o login para obter o **Bearer Token**, necessário para acessar outros endpoints protegidos.
+Faça o login utilizando esses dados para obter o token de INSTRUTOR:
+- **Endpoint**: `POST /login`
+- **URL**: `http://localhost:8080/login`
 
-> [!WARNING]
-> Não se preocupe com a interface visual, a interação será feita por meio de API.
+**Exemplo de requisição**:
+```json
+{
+  "email": "raquel.silva@alura.com.br",
+  "password": "senhaforte123*"
+}
+```
 
-### Questão 1 - Cadastro de Cursos
+---
 
-Na Alura, grande parte das funcionalidades gira em torno dos cursos. Sua primeira tarefa é implementar o cadastro de cursos, obedecendo às regras definidas abaixo.
+### 2. Cadastrar Novo Estudante
 
-#### Atributos
+Permite cadastrar um novo estudante sem a necessidade de autenticação.
 
-- Nome
-- Código (entre 4 e 10 caracteres)
-- Instrutor
-- Descrição
-- Status (`ACTIVE`, `INACTIVE`)
-- Data de inativação
 
-#### Regras
+- **Endpoint**: `POST /user/newStudent`
+- **URL**: `http://localhost:8080/user/newStudent`
 
-- O código do curso deve ser único, textual, sem espaços, números ou caracteres especiais, podendo ser separado por hífen (ex.: `spring-boot-avancado`).
-- Apenas usuários instrutores podem ser autores de cursos.
-- Os novos cursos devem ser automaticamente definidos como `ACTIVE`.
-- O campo "data de inativação" só deve ser preenchido quando o curso for inativado.
+**Exemplo de requisição**:
+```json
+{
+    "name": "Lara Clara",
+    "email": "lara@gmail.com",
+    "password": "12345"
+}
+```
 
-> [!TIP]
-> Há um ponto de partida no `CourseController` com a rota `/course/new`.
+---
 
-### Questão 2 - Inativação de Cursos
+### 3. Cadastrar Novo Instrutor
 
-Cursos podem ser inativados por diversos motivos, como atualizações ou descontinuação. Você será responsável por implementar essa funcionalidade, seguindo as regras a seguir.
+Permite cadastrar um novo instrutor, apenas com autenticação de instrutor.
 
-#### Regras
+- **Endpoint**: `POST /user/newInstructor`
+- **URL**: `http://localhost:8080/user/newInstructor`
 
-- Acesse a rota `/course/{code}/inactive` para inativar o curso com o código fornecido.
-- Ao inativar, o campo "status" deve ser alterado para `INACTIVE` e o campo "data de inativação" deve ser registrado com a data e hora atuais.
+**Exemplo de requisição**:
+```json
+{
+    "name": "Gustavo Mattos",
+    "email": "gustavo.mattos@alura.com.br",
+    "password": "senhaforte9876!"
+}
+```
+---
 
-### Questão 3 - Matrícula de Alunos
+### 4. Solicitar Relatório
 
-Com os cursos criados, o próximo passo é permitir que os alunos se matriculem nos cursos disponíveis.
+Permite que alunos e instrutores logados solicitem um relatório.
 
-#### Atributos
+- **Endpoint**: `GET /registration/report`
+- **URL**: `http://localhost:8080/registration/report`
+- **Autorização**: Bearer Token
 
-- Usuário
-- Curso
-- Data de matrícula
+---
 
-#### Regras
+### 5. Matrícula em Curso
 
-- Um usuário não pode se matricular mais de uma vez no mesmo curso.
-- Só é permitido matrícula em cursos ativos.
+Apenas alunos podem se matricular em cursos, e precisam estar logados.
 
-> [!TIP]
-> Já existe um ponto de partida no `RegistrationController`.
+- **Endpoint**: `POST /registration/new`
+- **URL**: `http://localhost:8080/registration/new`
+- **Autorização**: Bearer Token
 
-### Questão 4 - Relatório de Cursos Mais Acessados
+**Exemplo de requisição**:
+```json
+{
+  "courseCode": "CDSB-A",
+  "studentEmail": "lara@gmail.com"
+}
+```
 
-Agora que temos usuários e matrículas, queremos gerar um relatório para identificar os cursos mais acessados. Implemente a lógica na rota `/registration/report` para listar os cursos com mais matrículas, ordenados pelo número de inscrições.
+---
 
-> [!IMPORTANT]
-> A Alura possui um grande volume de dados. Portanto, priorize o uso de SQL nativo na construção do relatório e evite o [anti-pattern N+1](https://semantix.ai/o-que-e-o-problema-n1/).
+### 6. Criar Novo Curso
 
-## Considerações Finais
+Apenas instrutores podem criar novos cursos, e precisam estar logados.
 
-- A avaliação será baseada na implementação dos requisitos e na forma como você aplica conceitos de lógica e orientação a objetos.
-- Qualquer tecnologia fora do escopo mencionado (como Swagger, Docker ou front-end) não será considerada.
-- Caso tenha dúvidas durante o desenvolvimento, faça anotações no código e implemente o que considerar mais adequado.
-- Testes são altamente valorizados, e candidatos que implementarem testes automatizados ganharão pontos extras.
-- Códigos muito semelhantes aos de outros candidatos podem resultar na anulação do teste.
-- O uso de ferramentas de IA é permitido, mas o código gerado deve ser revisado. Caso avance para a próxima etapa, a entrevista técnica será baseada no código que você produziu.
+- **Endpoint**: `POST /course/new`
+- **URL**: `http://localhost:8080/course/new`
+- **Autorização**: Bearer Token
 
-> [!TIP]
-> Para uma melhor organização dos commits, considere seguir as [convenções de commits](https://www.conventionalcommits.org/pt-br/v1.0.0/). Isso ajuda a manter um histórico claro e compreensível do projeto.
+**Exemplo de requisição**:
+```json
+{
+  "name": "Curso de Desenvolvimento Security",
+  "code": "SEC-NT",
+  "description": "Curso completo sobre desenvolvimento com Security.",
+  "instructorEmail": "mariana.costa@alura.com.br"
+}
+```
+
+---
+
+### 7. Inativar Curso
+
+Instrutores logados podem inativar um curso.
+
+- **Endpoint**: `PATCH /course/inactive/{courseCode}`
+- **URL**: `http://localhost:8080/course/inactive/WCDM`
+- **Autorização**: Bearer Token
+
+---
+
+## Como Usar no Postman
+
+1. Abra o Postman.
+2. Crie uma nova coleção ou importe o JSON da API.
+3. Adicione o **Bearer Token** no campo de `Authorization` para endpoints que exigem autenticação.
+4. Utilize o corpo das requisições com **raw JSON** e siga os exemplos fornecidos.
+
+---
+
+## Autenticação
+
+Requisições autenticadas utilizam o Bearer Token obtido via login. Inclua esse token no cabeçalho `Authorization` das requisições.

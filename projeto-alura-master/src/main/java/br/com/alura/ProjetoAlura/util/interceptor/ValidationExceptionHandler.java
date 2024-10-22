@@ -1,9 +1,7 @@
 package br.com.alura.ProjetoAlura.util.interceptor;
 
-import br.com.alura.ProjetoAlura.dtos.Error.ErrorItemDTO;
-import br.com.alura.ProjetoAlura.util.exceptions.CreatedException;
-import br.com.alura.ProjetoAlura.util.exceptions.NotFoundException;
-import br.com.alura.ProjetoAlura.util.exceptions.UnauthorizedException;
+import br.com.alura.ProjetoAlura.dtos.response.ErrorItemDTO;
+import br.com.alura.ProjetoAlura.util.exceptions.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -35,9 +33,21 @@ public class ValidationExceptionHandler {
         return new ResponseEntity<>(new ErrorItemDTO("Error", ex.getMessage()), HttpStatus.BAD_REQUEST);
     }
 
+    @ExceptionHandler(BadRequestException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ResponseEntity<ErrorItemDTO> handleBadRequestException(BadRequestException ex) {
+        return new ResponseEntity<>(new ErrorItemDTO("Error", ex.getMessage()), HttpStatus.BAD_REQUEST);
+    }
+
     @ExceptionHandler(CreatedException.class)
     @ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity<ErrorItemDTO> handleCreatedException(CreatedException ex){
         return new ResponseEntity<>(new ErrorItemDTO("Criado", ex.getMessage()), HttpStatus.CREATED);
+    }
+
+    @ExceptionHandler(UpdateException.class)
+    @ResponseStatus(HttpStatus.CREATED)
+    public ResponseEntity<ErrorItemDTO> handleUpdateException(UpdateException ex){
+        return new ResponseEntity<>(new ErrorItemDTO("Alterado", ex.getMessage()), HttpStatus.CREATED);
     }
 }
