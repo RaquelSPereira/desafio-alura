@@ -69,7 +69,6 @@ public class CourseService {
                 null,
                 LocalDateTime.now());
         save(course);
-        course.getInstructor().setPassword("*********");
         return course;
 
     }

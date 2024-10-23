@@ -2,6 +2,7 @@ package br.com.alura.ProjetoAlura.entities.user;
 
 import br.com.alura.ProjetoAlura.enums.role.RoleEnum;
 import br.com.alura.ProjetoAlura.util.encrypts.EncryptUtil;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -27,6 +28,8 @@ public class User {
     private RoleEnum role;
 
     private String email;
+
+    @JsonIgnore
     private String password;
 
     public User(String name, String email, RoleEnum role, String password) {

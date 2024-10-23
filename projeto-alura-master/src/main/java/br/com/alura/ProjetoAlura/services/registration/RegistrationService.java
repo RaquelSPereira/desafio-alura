@@ -39,7 +39,6 @@ public class RegistrationService {
                 user,
                 LocalDateTime.now());
         save(newRegistration);
-        newRegistration.getStudent().setPassword("**********");
         return newRegistration;
     }
 }
